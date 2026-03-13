@@ -1,6 +1,6 @@
 export function analyzeWithAI(data: any) {
 
-  const { amount, user } = data;
+  const { amount} = data;
 
   let anomalyScore = 0;
 
