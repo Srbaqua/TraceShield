@@ -1,6 +1,8 @@
-import policies from "../policies/policyRegistry.json";
+import { getPolicies } from "./policyLoader";
 
 export function evaluateRequest(data: any) {
+
+  const policies = getPolicies();
 
   for (const rule of policies.rules) {
 

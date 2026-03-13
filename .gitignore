@@ -24,3 +24,11 @@ logs
 
 # Environment variables
 .env*
+!.env.example
+/dashboard/node_modules
+/dashboard/dist
+/dashboard/.next
+/dashboard/next.config.js
+/dashboard/.env.local
+/dashboard/.env.development
+/dashboard/.env.production

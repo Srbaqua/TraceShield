@@ -18,7 +18,7 @@ app.post("/transfer", (req, res) => {
     });
 
 });
-
-app.listen(6000, () => {
-    console.log("Payment Service running on port 6000");
+const port = 8000;
+app.listen(port, () => {
+    console.log("Payment Service running on port", port);
 });

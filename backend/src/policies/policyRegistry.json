@@ -5,7 +5,7 @@
       "condition": {
         "field": "amount",
         "operator": ">",
-        "value": 10000
+        "value": 1000
       },
       "action": "BLOCK",
       "reason": "Transaction exceeds governance limit"

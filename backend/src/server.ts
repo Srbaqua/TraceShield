@@ -6,7 +6,9 @@ import { evaluateRequest } from "./governance/decisionEngine";
 import { analyzeWithAI } from "./agents/aiAuditorAgent";
 import { logGovernanceEvent } from "./logger/governanceLogger";
 import logsRoute from "./routes/logsRoute";
+import { calculateRiskScore } from "./agents/riskagent";
 const app = express()
+const cors = require("cors");
 
 app.use(cors())
 app.use(express.json())
@@ -24,7 +26,12 @@ app.post("/intercept/transfer", async (req, res) => {
 
   console.log("Argus intercepted request:", requestData);
 
+// const aiAnalysis = analyzeWithAI(requestData);
 const aiAnalysis = analyzeWithAI(requestData);
+
+const risk = calculateRiskScore(requestData);
+
+console.log("Risk Agent result:", risk);
 
 console.log("AI Auditor analysis:", aiAnalysis);
 
@@ -54,7 +61,7 @@ console.log("Governance decision:", decision);
   try {
 
     const backendResponse = await axios.post(
-      "http://localhost:6000/transfer",
+      "http://localhost:8000/transfer",
       requestData
     );
 
