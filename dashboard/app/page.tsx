@@ -9,6 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -32,6 +34,25 @@ export default function Home() {
     return () => clearInterval(interval)
   }, [])
 
+  const [user, setUser] = useState("")
+const [amount, setAmount] = useState("")
+
+const sendTransaction = async () => {
+
+  await fetch("http://localhost:6000/transfer", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      user,
+      amount: Number(amount)
+    })
+  })
+
+}
+
+
   return (
     <div className="p-10">
 
@@ -44,7 +65,33 @@ export default function Home() {
         </CardHeader>
 
         <CardContent>
+<Card className="mb-6">
 
+  <CardHeader>
+    <CardTitle>Transaction Simulator</CardTitle>
+  </CardHeader>
+
+  <CardContent className="flex gap-4">
+
+    <Input
+      placeholder="User"
+      value={user}
+      onChange={(e) => setUser(e.target.value)}
+    />
+
+    <Input
+      placeholder="Amount"
+      value={amount}
+      onChange={(e) => setAmount(e.target.value)}
+    />
+
+    <Button onClick={sendTransaction}>
+      Send Transaction
+    </Button>
+
+  </CardContent>
+
+</Card>
           <Table>
 
             <TableHeader>
@@ -54,6 +101,7 @@ export default function Home() {
                 <TableHead>Decision</TableHead>
                 <TableHead>Reason</TableHead>
                 <TableHead>Time</TableHead>
+            <TableHead>Explanation</TableHead>
               </TableRow>
             </TableHeader>
 
@@ -74,12 +122,14 @@ export default function Home() {
                       {log.decision}
                     </Badge>
                   </TableCell>
+                  
 
                   <TableCell>{log.reason}</TableCell>
 
                   <TableCell>
                     {new Date(log.timestamp).toLocaleTimeString()}
                   </TableCell>
+                  <TableCell>{log.explanation}</TableCell>
 
                 </TableRow>
 

@@ -7,6 +7,7 @@ import { analyzeWithAI } from "./agents/aiAuditorAgent";
 import { logGovernanceEvent } from "./logger/governanceLogger";
 import logsRoute from "./routes/logsRoute";
 import { calculateRiskScore } from "./agents/riskagent";
+import { generateExplanation } from "./agents/explainationAgent";
 const app = express()
 const cors = require("cors");
 
@@ -15,6 +16,7 @@ app.use(express.json())
 
 app.use("/governance", governanceRoutes)
 app.use("/governance", logsRoute);
+
 app.get("/", (req, res) => {
   res.send("Argus Sentinel Governance Engine Running")
 })
@@ -36,15 +38,23 @@ console.log("Risk Agent result:", risk);
 console.log("AI Auditor analysis:", aiAnalysis);
 
 const decision = evaluateRequest(requestData);
+const explanation = generateExplanation(
+  requestData,
+  risk,
+  decision
+);
 await logGovernanceEvent({
   service: "PaymentService",
   action: "transfer",
   user: requestData.user,
   amount: requestData.amount,
   decision: decision.decision,
-  reason: decision.reason
+  reason: decision.reason,
+  explanation
 });
 
+
+console.log("AI Explanation:", explanation);
 console.log("Governance decision:", decision);
 
   // console.log("Governance decision:", decision);
@@ -80,11 +90,6 @@ console.log("Governance decision:", decision);
   }
 
 });
-
-
-
-
-
 
 const PORT = 5000
 

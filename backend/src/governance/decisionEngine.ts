@@ -1,5 +1,6 @@
 import { getPolicies } from "./policyLoader";
 
+// TODO: Add IQ AI for more robust rule checking
 export function evaluateRequest(data: any) {
 
   const policies = getPolicies();
