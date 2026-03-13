@@ -36,18 +36,14 @@ export function enforceDecision(pipelineResult: any) {
     pipelineResult.policy.decision
 
   // Final governance rule
-  if (aiRecommendation === "BLOCK" || policyDecision === "BLOCK") {
+if (aiRecommendation === "BLOCK" || policyDecision === "BLOCK") {
+  return { decision: "BLOCK", reason: "AI or policy violation" }
+}
 
-    return {
-      decision: "BLOCK",
-      reason: "Blocked by AI or policy governance"
-    }
+if (aiRecommendation === "MONITOR") {
+  return { decision: "MONITOR", reason: "AI recommends monitoring" }
+}
 
-  }
-
-  return {
-    decision: "ALLOW",
-    reason: "No governance rule triggered"
-  }
+return { decision: "ALLOW", reason: "No governance rule triggered" }
 
 }

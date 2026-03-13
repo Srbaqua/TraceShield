@@ -25,14 +25,31 @@ export default function Home() {
     setLogs(data)
   }
 
-  useEffect(() => {
+const [stats, setStats] = useState<any>({})
+const fetchStats = async () => {
+  const res = await fetch("http://localhost:5000/governance/stats")
+  const data = await res.json()
+  setStats(data)
+}
+
+useEffect(() => {
+  fetchLogs()
+  fetchStats()
+
+  const interval = setInterval(() => {
     fetchLogs()
+    fetchStats()
+  }, 3000)
 
-    // auto refresh every 3 seconds
-    const interval = setInterval(fetchLogs, 3000)
+  return () => clearInterval(interval)
+}, [])
+  // useEffect(() => {
+  //   fetchLogs()
 
-    return () => clearInterval(interval)
-  }, [])
+  //   const interval = setInterval(fetchLogs, 3000)
+
+  //   return () => clearInterval(interval)
+  // }, [])
 
   const [user, setUser] = useState("")
 const [amount, setAmount] = useState("")
@@ -92,6 +109,38 @@ const sendTransaction = async () => {
   </CardContent>
 
 </Card>
+
+      <div className="grid grid-cols-4 gap-4 mb-6">
+
+<Card>
+<CardHeader>
+<CardTitle>Total Requests</CardTitle>
+</CardHeader>
+<CardContent>{stats.totalRequests || 0}</CardContent>
+</Card>
+
+<Card>
+<CardHeader>
+<CardTitle>Blocked Requests</CardTitle>
+</CardHeader>
+<CardContent>{stats.blockedRequests || 0}</CardContent>
+</Card>
+
+<Card>
+<CardHeader>
+<CardTitle>Monitoring Events</CardTitle>
+</CardHeader>
+<CardContent>{stats.monitoringEvents || 0}</CardContent>
+</Card>
+
+<Card>
+<CardHeader>
+<CardTitle>High Risk Events</CardTitle>
+</CardHeader>
+<CardContent>{stats.highRiskEvents || 0}</CardContent>
+</Card>
+
+</div>
           <Table>
 
             <TableHeader>

@@ -8,11 +8,14 @@ import logsRoute from "./routes/logsRoute"
 import { runArgusPipeline, enforceDecision } from "./agents/argusOrchestrator"
 import { logGovernanceEvent } from "./logger/governanceLogger"
 
+import statsRoute from "./routes/statsRoutes"
+
 const app = express()
 
 app.use(cors())
 app.use(express.json())
 
+app.use("/governance", statsRoute)
 app.use("/governance", governanceRoutes)
 app.use("/governance", logsRoute)
 
