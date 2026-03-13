@@ -1,0 +1,14 @@
+{
+  "rules": [
+    {
+      "name": "large_transaction",
+      "condition": {
+        "field": "amount",
+        "operator": ">",
+        "value": 10000
+      },
+      "action": "BLOCK",
+      "reason": "Transaction exceeds governance limit"
+    }
+  ]
+}
