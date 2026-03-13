@@ -7,22 +7,26 @@ router.get("/stats", async (req, res) => {
 
   const db = await getDatabase()
 
-  const total = await db.collection("governanceLogs").countDocuments()
+  const totalRequests =
+    await db.collection("governanceLogs").countDocuments()
 
-  const blocked = await db.collection("governanceLogs")
-    .countDocuments({ decision: "BLOCK" })
+  const blockedRequests =
+    await db.collection("governanceLogs")
+      .countDocuments({ decision: "BLOCK" })
 
-  const monitored = await db.collection("governanceLogs")
-    .countDocuments({ decision: "MONITOR" })
+  const monitoringEvents =
+    await db.collection("governanceLogs")
+      .countDocuments({ decision: "MONITOR" })
 
-  const highRisk = await db.collection("governanceLogs")
-    .countDocuments({ "risk.level": "HIGH" })
+  const highRiskEvents =
+    await db.collection("governanceLogs")
+      .countDocuments({ "risk.level": "HIGH" })
 
   res.json({
-    totalRequests: total,
-    blockedRequests: blocked,
-    monitoringEvents: monitored,
-    highRiskEvents: highRisk
+    totalRequests,
+    blockedRequests,
+    monitoringEvents,
+    highRiskEvents
   })
 
 })

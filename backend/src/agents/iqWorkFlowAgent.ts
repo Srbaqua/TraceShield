@@ -1,33 +1,82 @@
 import { AgentBuilder } from "@iqai/adk"
+import { z } from "zod"
 import dotenv from "dotenv"
+
+import { logEventTool, blockTransactionTool } from "./governanceTools"
 
 dotenv.config()
 
+/**
+ * Typed output schema for governance decisions
+ */
+const GovernanceSchema = z.object({
+  anomaly_score: z.number(),
+  risk_level: z.enum(["LOW", "MEDIUM", "HIGH"]),
+  recommended_action: z.enum(["ALLOW", "MONITOR", "BLOCK"]),
+  explanation: z.string()
+})
+
+/**
+ * Argus Auditor Agent using IQ AI ADK
+ */
 export async function runIQWorkflow(data: any) {
 
-  const workflow = await AgentBuilder
-    .create("argus_governance_workflow")
-    .withModel("gemini-2.5-flash")
+  const { runner } = await AgentBuilder
+    .create("argus_auditor_agent")
+
+    .withDescription(
+      "AI security auditor that analyzes backend API transactions for anomalies"
+    )
+
+    .withModel(process.env.LLM_MODEL || "gemini-2.5-flash")
+
     .withInstruction(`
-You are an AI governance system that analyzes API transactions.
+You are an AI governance auditor responsible for protecting backend APIs.
 
-Return a JSON object with:
-- anomaly_score
-- risk_level
-- recommended_action
+Analyze financial transactions for potential risks.
+
+You must determine:
+- anomaly_score (0 to 10)
+- risk_level (LOW, MEDIUM, HIGH)
+- recommended_action (ALLOW, MONITOR, BLOCK)
 - explanation
+
+Guidelines:
+
+LOW risk:
+Normal transactions within expected range.
+
+MEDIUM risk:
+Unusual behavior requiring monitoring.
+
+HIGH risk:
+Suspicious or potentially fraudulent activity.
+
+If the transaction appears dangerous, recommend BLOCK.
+If uncertain but suspicious, recommend MONITOR.
+Otherwise recommend ALLOW.
+
+If blocking is required, you may call the block_transaction tool.
+Always log the governance decision using the log_governance_event tool.
 `)
-  
-  const prompt = `
+
+    .withTools(
+      logEventTool,
+      blockTransactionTool
+    )
+
+    .withOutputSchema(GovernanceSchema)
+
+    .build()
+
+  const result = await runner.ask(`
+Transaction Analysis Request
+
 User: ${data.user}
-Amount: ${data.amount}
-`
+Transaction Amount: ${data.amount}
 
-  const result = await workflow.ask(prompt)
+Evaluate the risk of this transaction.
+`)
 
-//   Extract JSON
-  const text = result.toString()
-  const json = text.replace(/```json|```/g, "").trim()
-
-  return JSON.parse(json)
+  return result
 }

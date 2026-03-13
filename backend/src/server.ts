@@ -5,7 +5,8 @@ import axios from "axios"
 import governanceRoutes from "./routes/governanceRoutes"
 import logsRoute from "./routes/logsRoute"
 
-import { runArgusPipeline, enforceDecision } from "./agents/argusOrchestrator"
+// import { runArgusPipeline, enforceDecision } from "./agents/argusOrchestrator"
+import { runArgusSequentialPipeline } from "./agents/argusSequentialAgent"
 import { logGovernanceEvent } from "./logger/governanceLogger"
 
 import statsRoute from "./routes/statsRoutes"
@@ -31,24 +32,27 @@ app.post("/intercept/transfer", async (req, res) => {
 
   try {
 
-    // 🔹 Run full multi‑agent governance pipeline
-    const pipeline = await runArgusPipeline(requestData)
+    // // 🔹 Run full multi‑agent governance pipeline
+    // const pipeline = await runArgusPipeline(requestData)
 
-    // 🔹 Enforcement decision
-    const finalDecision = enforceDecision(pipeline)
+    // // 🔹 Enforcement decision
+    // const finalDecision = enforceDecision(pipeline)
+    const pipeline = await runArgusSequentialPipeline(requestData)
+
+const finalDecision = pipeline.finalDecision
 
     console.log("Final Governance Decision:", finalDecision)
 
     // 🔹 Log governance event
-    await logGovernanceEvent({
-      service: "PaymentService",
-      action: "transfer",
-      user: requestData.user,
-      amount: requestData.amount,
-      decision: finalDecision.decision,
-      reason: finalDecision.reason,
-      explanation: pipeline.auditor?.explanation || "No AI explanation"
-    })
+    // await logGovernanceEvent({
+    //   service: "PaymentService",
+    //   action: "transfer",
+    //   user: requestData.user,
+    //   amount: requestData.amount,
+    //   decision: finalDecision.decision,
+    //   reason: finalDecision.reason,
+    //   explanation: pipeline.auditor?.explanation || "No AI explanation"
+    // })
 
     //  BLOCK request
     if (finalDecision.decision === "BLOCK") {

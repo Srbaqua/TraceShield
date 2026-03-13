@@ -4,17 +4,17 @@ import { evaluateRequest } from "../governance/decisionEngine"
 
 export async function runArgusPipeline(requestData: any) {
 
-  // 1️ Auditor Agent (IQ AI)
+  // Auditor Agent (IQ AI)
   const auditorResult = await runIQWorkflow(requestData)
 
   console.log("Auditor Agent:", auditorResult)
 
-  // 2️ Risk Agent
+  // Risk Agent
   const riskResult = calculateRiskScore(requestData)
 
   console.log("Risk Agent:", riskResult)
 
-  // 3 Policy Agent
+  // Policy Agent
   const policyDecision = evaluateRequest(requestData)
 
   console.log("Policy Agent:", policyDecision)
