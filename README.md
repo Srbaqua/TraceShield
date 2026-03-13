@@ -1,7 +1,5 @@
 # Trace Shield
 
-# Trace Shield
-
 **Trace Shield** is an autonomous governance and security layer designed to monitor, analyze, and control the behavior of distributed systems and AI‑driven services.
 
 Modern infrastructures rely on APIs, microservices, and increasingly autonomous AI agents. These systems can behave unpredictably due to misconfigurations, abnormal traffic patterns, or malicious requests.
