@@ -7,7 +7,8 @@ import { analyzeWithAI } from "./agents/aiAuditorAgent";
 import { logGovernanceEvent } from "./logger/governanceLogger";
 import logsRoute from "./routes/logsRoute";
 import { calculateRiskScore } from "./agents/riskAgent";
-const app = express();
+import { generateExplanation } from "./agents/explainationAgent";
+const app = express()
 const cors = require("cors");
 
 app.use(cors());
@@ -15,6 +16,7 @@ app.use(express.json());
 
 app.use("/governance", governanceRoutes);
 app.use("/governance", logsRoute);
+
 app.get("/", (req, res) => {
   res.send("Argus Sentinel Governance Engine Running");
 });
@@ -32,17 +34,27 @@ app.post("/intercept/transfer", async (req, res) => {
 
   console.log("AI Auditor analysis:", aiAnalysis);
 
-  const decision = evaluateRequest(requestData);
-  // await logGovernanceEvent({
-  //   service: "PaymentService",
-  //   action: "transfer",
-  //   user: requestData.user,
-  //   amount: requestData.amount,
-  //   decision: decision.decision,
-  //   reason: decision.reason,
-  // });
+const decision = evaluateRequest(requestData);
+const explanation = generateExplanation(
+  requestData,
+  risk,
+  decision
+);
+await logGovernanceEvent({
+  service: "PaymentService",
+  action: "transfer",
+  user: requestData.user,
+  amount: requestData.amount,
+  decision: decision.decision,
+  reason: decision.reason,
+  explanation
+});
 
-  console.log("Governance decision:", decision);
+
+console.log("AI Explanation:", explanation);
+console.log("Governance decision:", decision);
+
+  // console.log("Governance decision:", decision);
 
   if (decision.decision === "BLOCK") {
     return res.status(403).json({
