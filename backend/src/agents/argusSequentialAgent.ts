@@ -3,6 +3,7 @@ import { calculateRiskScore } from "./riskAgent"
 import { evaluateRequest } from "../governance/decisionEngine"
 import { negotiateDecision } from "./negotiatorAgent"
 import { createTrace, addTraceStep } from "../logger/traceLoggers"
+import { getUserBehaviorProfile } from "../governance/behaviourAnalyzer"
 
 export async function runArgusSequentialPipeline(requestData: any) {
 
@@ -10,10 +11,24 @@ export async function runArgusSequentialPipeline(requestData: any) {
 
   const state: any = {}
 
+  const behaviorProfile = await getUserBehaviorProfile(requestData.user)
+
+state.behavior = behaviorProfile
+
+addTraceStep(
+  trace,
+  "BehaviorAnalyzer",
+  "load_user_behavior",
+  behaviorProfile
+)
+
   // -----------------------------
   // 1️ Auditor Agent (IQ AI)
   // -----------------------------
-  const auditorResult = await runIQWorkflow(requestData)
+const auditorResult = await runIQWorkflow({
+  ...requestData,
+  behavior: state.behavior
+})
 
   addTraceStep(
     trace,
@@ -49,6 +64,8 @@ const enrichedRequest = {
   ...requestData,
   riskScore: state.risk.riskScore
 }
+
+
 
 const policyDecision = await evaluateRequest(enrichedRequest)
 

@@ -69,11 +69,11 @@ If uncertain but suspicious, recommend MONITOR.
 Otherwise recommend ALLOW.
 
 If blocking is required, you may call the block_transaction tool.
-Always log the governance decision using the log_governance_event tool.
+
 `)
 
     .withTools(
-      logEventTool,
+      // logEventTool,
       blockTransactionTool
     )
 
@@ -82,12 +82,23 @@ Always log the governance decision using the log_governance_event tool.
     .build()
 
   const result = await runner.ask(`
+
 Transaction Analysis Request
 
 User: ${data.user}
 Transaction Amount: ${data.amount}
 
-Evaluate the risk of this transaction.
+Historical Behavior:
+Average Transaction Amount: ${data.behavior?.avgAmount}
+Previous Transaction Count: ${data.behavior?.transactionCount}
+
+Determine if this transaction deviates significantly from the user's historical behavior.
+
+Evaluate:
+- anomaly_score
+- risk_level
+- recommended_action
+- explanation
 `)
 
   return result

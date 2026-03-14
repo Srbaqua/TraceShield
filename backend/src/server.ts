@@ -60,16 +60,18 @@ app.post("/intercept/transfer", async (req, res) => {
     // -----------------------------
     // Store Governance Log
     // -----------------------------
-
-    await logGovernanceEvent({
-      service: "PaymentService",
-      action: "transfer",
-      user: requestData.user,
-      amount: requestData.amount,
-      decision: finalDecision.decision,
-      reason: finalDecision.reason,
-      explanation: pipeline?.state?.auditor?.explanation || "No explanation",
-    })
+await logGovernanceEvent({
+  service: "PaymentService",
+  action: "transfer",
+  user: requestData.user,
+  amount: requestData.amount,
+  decision: finalDecision.decision,
+  reason: finalDecision.reason,
+  explanation: pipeline?.state?.auditor?.explanation || "No explanation",
+  riskScore: pipeline?.state?.risk?.riskScore,
+  riskLevel: pipeline?.state?.risk?.level,
+  traceId: pipeline?.trace?.traceId
+})
 
     // -----------------------------
     // If BLOCK → stop request
