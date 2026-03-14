@@ -1,58 +1,104 @@
 import { runIQWorkflow } from "./iqWorkFlowAgent"
 import { calculateRiskScore } from "./riskAgent"
 import { evaluateRequest } from "../governance/decisionEngine"
+import { negotiateDecision } from "./negotiatorAgent"
 import { createTrace, addTraceStep } from "../logger/traceLoggers"
+
 export async function runArgusSequentialPipeline(requestData: any) {
-    const trace = createTrace()
-  
-  // Initialize the state object you were using
+
+  const trace = createTrace()
+
   const state: any = {}
-  
 
-const auditorResult = await runIQWorkflow(requestData)
+  // -----------------------------
+  // 1️ Auditor Agent (IQ AI)
+  // -----------------------------
+  const auditorResult = await runIQWorkflow(requestData)
 
-addTraceStep(trace, "AuditorAgent", "analyze_transaction", auditorResult)
+  addTraceStep(
+    trace,
+    "AuditorAgent",
+    "analyze_transaction",
+    auditorResult
+  )
 
   console.log("Auditor Agent:", auditorResult)
+
   state.auditor = auditorResult
 
-  // (Assuming this might return a promise, added await just in case)
-const riskResult = calculateRiskScore(requestData)
+  // -----------------------------
+  // 2️ Risk Agent
+  // -----------------------------
+  const riskResult = calculateRiskScore(requestData)
 
-addTraceStep(trace, "RiskAgent", "calculate_risk_score", riskResult)
+  addTraceStep(
+    trace,
+    "RiskAgent",
+    "calculate_risk_score",
+    riskResult
+  )
+
   console.log("Risk Agent:", riskResult)
-  state.risk = riskResult
-const policyDecision = await evaluateRequest(requestData)
 
-addTraceStep(trace, "PolicyAgent", "evaluate_policy", policyDecision)
+  state.risk = riskResult
+
+  // -----------------------------
+  // 3️ Policy Agent
+  // -----------------------------
+const enrichedRequest = {
+  ...requestData,
+  riskScore: state.risk.riskScore
+}
+
+const policyDecision = await evaluateRequest(enrichedRequest)
+
+  addTraceStep(
+    trace,
+    "PolicyAgent",
+    "evaluate_policy",
+    policyDecision
+  )
+
   console.log("Policy Agent:", policyDecision)
+
   state.policy = policyDecision
 
-  const aiRecommendation = state.auditor.recommended_action
-  const policyDecisionResult = state.policy.decision
+  // -----------------------------
+  // 4️ Negotiator Agent
+  // -----------------------------
+  const negotiatedDecision = negotiateDecision(
+    state.auditor,
+    state.risk,
+    state.policy
+  )
 
-  let finalDecision = {
-    decision: "ALLOW",
-    reason: "No governance rule triggered"
-  }
+  addTraceStep(
+    trace,
+    "NegotiatorAgent",
+    "resolve_conflict",
+    negotiatedDecision
+  )
 
-  if (aiRecommendation === "BLOCK" || policyDecisionResult === "BLOCK") {
-    finalDecision = {
-      decision: "BLOCK",
-      reason: "AI or policy violation"
-    }
-  } else if (aiRecommendation === "MONITOR") {
-    finalDecision = {
-      decision: "MONITOR",
-      reason: "AI recommends monitoring"
-    }
-  }
-addTraceStep(trace, "EnforcementAgent", "final_decision", finalDecision)
+  // -----------------------------
+  // 5️ Enforcement Agent
+  // -----------------------------
+  const finalDecision = negotiatedDecision
+
+  addTraceStep(
+    trace,
+    "EnforcementAgent",
+    "final_decision",
+    finalDecision
+  )
+
   console.log("Final Governance Decision:", finalDecision)
+
   state.finalDecision = finalDecision
 
-  return {state,
-  finalDecision,
-  trace
+  return {
+    state,
+    finalDecision,
+    trace
   }
+
 }

@@ -9,15 +9,17 @@ router.post("/policy", async (req, res) => {
 
   const policy = {
     name: req.body.name,
-    field: req.body.field,
-    operator: req.body.operator,
-    value: req.body.value,
-    action: req.body.action
+    conditions: req.body.conditions,
+    action: req.body.action,
+    reason: req.body.reason
   }
 
   await db.collection("governancePolicies").insertOne(policy)
 
-  res.json({ message: "Policy created", policy })
+  res.json({
+    message: "Policy created",
+    policy
+  })
 
 })
 

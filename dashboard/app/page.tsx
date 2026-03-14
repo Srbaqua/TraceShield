@@ -95,12 +95,12 @@ export default function Home() {
     <div className="p-10">
 
       <h1 className="text-3xl font-bold mb-6">
-        Argus Sentinel Governance Dashboard
+        Trace Shield Governance Dashboard
       </h1>
 
-      {/* -----------------------------
+      -----------------------------
           Threat Intelligence Cards
-      ------------------------------ */}
+      ------------------------------
 
       <div className="grid grid-cols-4 gap-4 mb-10">
 
@@ -203,7 +203,7 @@ export default function Home() {
                 <p><b>Agent:</b> {step.agent}</p>
                 <p><b>Action:</b> {step.action}</p>
 
-                <pre className="bg-gray-100 p-2 mt-2 text-sm rounded">
+                <pre className=" p-2 mt-2 text-sm rounded">
                   {JSON.stringify(step.result, null, 2)}
                 </pre>
 

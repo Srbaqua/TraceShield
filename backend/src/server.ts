@@ -1,75 +1,104 @@
 import express from "express"
 import cors from "cors"
 import axios from "axios"
-import dotenv from "dotenv";
-dotenv.config();
+
 import governanceRoutes from "./routes/governanceRoutes"
 import logsRoute from "./routes/logsRoute"
 import policyRoute from "./routes/policyRoute"
+import statsRoutes from "./routes/statsRoutes"
 
-
-// import { runArgusPipeline, enforceDecision } from "./agents/argusOrchestrator"
 import { runArgusSequentialPipeline } from "./agents/argusSequentialAgent"
 import { logGovernanceEvent } from "./logger/governanceLogger"
 
-import statsRoute from "./routes/statsRoutes"
-
 const app = express()
 
-app.use(cors());
-app.use(express.json());
+app.use(cors())
+app.use(express.json())
 
+// -----------------------------
+// Routes
+// -----------------------------
 
-app.use("/governance", policyRoute)
-app.use("/governance", statsRoute)
 app.use("/governance", governanceRoutes)
 app.use("/governance", logsRoute)
+app.use("/governance", policyRoute)
+app.use("/governance", statsRoutes)
+
+
+// -----------------------------
+// Health Check
+// -----------------------------
 
 app.get("/", (req, res) => {
   res.send("Argus Sentinel Governance Engine Running")
 })
 
+
+// -----------------------------
+// Intercept API Requests
+// -----------------------------
+
 app.post("/intercept/transfer", async (req, res) => {
-
-  const requestData = req.body
-
-  console.log("Argus intercepted request:", requestData)
 
   try {
 
-    // // 🔹 Run full multi‑agent governance pipeline
-    // const pipeline = await runArgusPipeline(requestData)
+    const requestData = req.body
 
-    // // 🔹 Enforcement decision
-    // const finalDecision = enforceDecision(pipeline)
+    console.log("Argus intercepted request:", requestData)
+
+    // -----------------------------
+    // Run Multi‑Agent Governance Pipeline
+    // -----------------------------
+
     const pipeline = await runArgusSequentialPipeline(requestData)
 
-const finalDecision = pipeline.finalDecision
+    const finalDecision = pipeline.finalDecision
+    const trace = pipeline.trace
 
     console.log("Final Governance Decision:", finalDecision)
 
-    // 🔹 Log governance event
-    // await logGovernanceEvent({
-    //   service: "PaymentService",
-    //   action: "transfer",
-    //   user: requestData.user,
-    //   amount: requestData.amount,
-    //   decision: finalDecision.decision,
-    //   reason: finalDecision.reason,
-    //   explanation: pipeline.auditor?.explanation || "No AI explanation"
-    // })
+    // -----------------------------
+    // Store Governance Log
+    // -----------------------------
 
-    //  BLOCK request
+    await logGovernanceEvent({
+      service: "PaymentService",
+      action: "transfer",
+      user: requestData.user,
+      amount: requestData.amount,
+      decision: finalDecision.decision,
+      reason: finalDecision.reason,
+      explanation: pipeline?.state?.auditor?.explanation || "No explanation",
+    })
+
+    // -----------------------------
+    // If BLOCK → stop request
+    // -----------------------------
+
     if (finalDecision.decision === "BLOCK") {
 
       return res.status(403).json({
         status: "blocked",
-        reason: finalDecision.reason
+        reason: finalDecision.reason,
+        trace
       })
 
     }
 
-    // Forward to backend
+    // -----------------------------
+    // If MONITOR → allow but log
+    // -----------------------------
+
+    if (finalDecision.decision === "MONITOR") {
+
+      console.log("Transaction monitored")
+
+    }
+
+    // -----------------------------
+    // Forward request to backend
+    // -----------------------------
+
     const backendResponse = await axios.post(
       "http://localhost:8000/transfer",
       requestData
@@ -78,9 +107,7 @@ const finalDecision = pipeline.finalDecision
     res.json({
       status: "allowed",
       backendResponse: backendResponse.data,
-      reason: finalDecision.reason,
-  trace: pipeline.trace
-      
+      trace
     })
 
   } catch (error) {
@@ -89,15 +116,20 @@ const finalDecision = pipeline.finalDecision
 
     res.status(500).json({
       status: "error",
-      message: "Governance pipeline failed"
+      message: "Governance processing failed"
     })
 
   }
 
 })
 
-const PORT = 5000;
+
+// -----------------------------
+// Start Server
+// -----------------------------
+
+const PORT = 5000
 
 app.listen(PORT, () => {
-  console.log(`Argus Sentinel running on port ${PORT}`);
-});
+  console.log(`Argus Sentinel running on port ${PORT}`)
+})

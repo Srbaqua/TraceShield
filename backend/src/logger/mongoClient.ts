@@ -1,6 +1,7 @@
 // mongoClient.ts
 import { MongoClient } from "mongodb";
-
+import dotenv from "dotenv"
+dotenv.config()
 // Fail loudly and clearly if the variable is missing
 if (!process.env.MONGO_URI) {
   throw new Error("FATAL ERROR: MONGO_URI is not defined in the .env file.");
