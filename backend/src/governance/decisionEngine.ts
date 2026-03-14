@@ -1,31 +1,37 @@
-import { getPolicies } from "./policyLoader";
+import { getPolicies } from "../models/policyModels"
 
-// TODO: Add IQ AI for more robust rule checking
-export function evaluateRequest(data: any) {
+export async function evaluateRequest(requestData: any) {
 
-  const policies = getPolicies();
+  const policies = await getPolicies()
 
-  for (const rule of policies.rules) {
+  for (const policy of policies) {
 
-    const { field, operator, value } = rule.condition;
+    const fieldValue = requestData[policy.field]
 
-    const requestValue = data[field];
-
-    if (operator === ">" && requestValue > value) {
-
+    if (policy.operator === ">" && fieldValue > policy.value) {
       return {
-        decision: rule.action,
-        reason: rule.reason,
-        triggeredRule: rule.name
-      };
-
+        decision: policy.action,
+        reason: `Policy triggered: ${policy.name}`
+      }
     }
 
+    if (policy.operator === "<" && fieldValue < policy.value) {
+      return {
+        decision: policy.action,
+        reason: `Policy triggered: ${policy.name}`
+      }
+    }
+
+    if (policy.operator === "==" && fieldValue === policy.value) {
+      return {
+        decision: policy.action,
+        reason: `Policy triggered: ${policy.name}`
+      }
+    }
   }
 
   return {
     decision: "ALLOW",
     reason: "No governance rule triggered"
-  };
-
+  }
 }

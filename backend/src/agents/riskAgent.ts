@@ -4,7 +4,7 @@ export function calculateRiskScore(data: any) {
 
   const { amount } = data;
 
-  if (amount > 5000) {
+  if (amount > 3000) {
     riskScore += 3;
   }
 

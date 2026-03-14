@@ -40,7 +40,19 @@ You must determine:
 - risk_level (LOW, MEDIUM, HIGH)
 - recommended_action (ALLOW, MONITOR, BLOCK)
 - explanation
+Guidelines:
+Return ONLY valid JSON.
+Do not include explanations outside JSON.
+Do not include markdown.
+Do not include text before or after JSON.
+The output must strictly follow this format:
 
+{
+ "anomaly_score": number,
+ "risk_level": "LOW" | "MEDIUM" | "HIGH",
+ "recommended_action": "ALLOW" | "MONITOR" | "BLOCK",
+ "explanation": "string"
+}
 Guidelines:
 
 LOW risk:

@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 dotenv.config();
 import governanceRoutes from "./routes/governanceRoutes"
 import logsRoute from "./routes/logsRoute"
+import policyRoute from "./routes/policyRoute"
+
 
 // import { runArgusPipeline, enforceDecision } from "./agents/argusOrchestrator"
 import { runArgusSequentialPipeline } from "./agents/argusSequentialAgent"
@@ -17,6 +19,8 @@ const app = express()
 app.use(cors());
 app.use(express.json());
 
+
+app.use("/governance", policyRoute)
 app.use("/governance", statsRoute)
 app.use("/governance", governanceRoutes)
 app.use("/governance", logsRoute)
@@ -73,7 +77,10 @@ const finalDecision = pipeline.finalDecision
 
     res.json({
       status: "allowed",
-      backendResponse: backendResponse.data
+      backendResponse: backendResponse.data,
+      reason: finalDecision.reason,
+  trace: pipeline.trace
+      
     })
 
   } catch (error) {

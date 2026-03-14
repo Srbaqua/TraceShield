@@ -1,4 +1,4 @@
-import { runIQWorkflow } from "./iqworkFlowAgent"
+import { runIQWorkflow } from "./iqWorkFlowAgent"
 import { calculateRiskScore } from "./riskAgent"
 import { evaluateRequest } from "../governance/decisionEngine"
 
@@ -15,9 +15,11 @@ export async function runArgusPipeline(requestData: any) {
   console.log("Risk Agent:", riskResult)
 
   // Policy Agent
-  const policyDecision = evaluateRequest(requestData)
+  const policyDecision = await evaluateRequest(requestData)
 
   console.log("Policy Agent:", policyDecision)
+
+//   state.policy = policyDecision
 
   return {
     auditor: auditorResult,
