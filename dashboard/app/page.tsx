@@ -36,7 +36,7 @@ export default function Home() {
   }
 
   const sendTransaction = async () => {
-    const res = await fetch("http://localhost:5000/intercept/transfer", {
+    const res = await fetch("http://localhost:8000/transfer", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user, amount })

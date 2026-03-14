@@ -1,51 +1,51 @@
-import { runIQWorkflow } from "./iqWorkFlowAgent"
-import { calculateRiskScore } from "./riskAgent"
-import { evaluateRequest } from "../governance/decisionEngine"
+// import { runIQWorkflow } from "./iqWorkFlowAgent"
+// import { calculateRiskScore } from "./riskAgent"
+// import { evaluateRequest } from "../governance/decisionEngine"
 
-export async function runArgusPipeline(requestData: any) {
+// export async function runArgusPipeline(requestData: any) {
 
-  // Auditor Agent (IQ AI)
-  const auditorResult = await runIQWorkflow(requestData)
+//   // Auditor Agent (IQ AI)
+//   const auditorResult = await runIQWorkflow(requestData)
 
-  console.log("Auditor Agent:", auditorResult)
+//   console.log("Auditor Agent:", auditorResult)
 
-  // Risk Agent
-  const riskResult = calculateRiskScore(requestData)
+//   // Risk Agent
+//   const riskResult = calculateRiskScore(requestData)
 
-  console.log("Risk Agent:", riskResult)
+//   console.log("Risk Agent:", riskResult)
 
-  // Policy Agent
-  const policyDecision = await evaluateRequest(requestData)
+//   // Policy Agent
+//   const policyDecision = await evaluateRequest(requestData)
 
-  console.log("Policy Agent:", policyDecision)
+//   console.log("Policy Agent:", policyDecision)
 
-//   state.policy = policyDecision
+//   //   state.policy = policyDecision
 
-  return {
-    auditor: auditorResult,
-    risk: riskResult,
-    policy: policyDecision
-  }
-}
-export function enforceDecision(pipelineResult: any) {
+//   return {
+//     auditor: auditorResult,
+//     risk: riskResult,
+//     policy: policyDecision
+//   }
+// }
+// export function enforceDecision(pipelineResult: any) {
 
-  // AI recommendation
-  const aiRecommendation =
-    pipelineResult.auditor.recommended_action
+//   // AI recommendation
+//   const aiRecommendation =
+//     pipelineResult.auditor.recommended_action
 
-  // Policy decision
-  const policyDecision =
-    pipelineResult.policy.decision
+//   // Policy decision
+//   const policyDecision =
+//     pipelineResult.policy.decision
 
-  // Final governance rule
-if (aiRecommendation === "BLOCK" || policyDecision === "BLOCK") {
-  return { decision: "BLOCK", reason: "AI or policy violation" }
-}
+//   // Final governance rule
+//   if (aiRecommendation === "BLOCK" || policyDecision === "BLOCK") {
+//     return { decision: "BLOCK", reason: "AI or policy violation" }
+//   }
 
-if (aiRecommendation === "MONITOR") {
-  return { decision: "MONITOR", reason: "AI recommends monitoring" }
-}
+//   if (aiRecommendation === "MONITOR") {
+//     return { decision: "MONITOR", reason: "AI recommends monitoring" }
+//   }
 
-return { decision: "ALLOW", reason: "No governance rule triggered" }
+//   return { decision: "ALLOW", reason: "No governance rule triggered" }
 
-}
+// }

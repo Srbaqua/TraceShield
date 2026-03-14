@@ -43,7 +43,7 @@ app.post("/intercept/transfer", async (req, res) => {
   try {
 
     const requestData = req.body
-
+console.log("Requestly interception confirmed")
     console.log("Argus intercepted request:", requestData)
 
     // -----------------------------
@@ -101,10 +101,15 @@ await logGovernanceEvent({
     // Forward request to backend
     // -----------------------------
 
-    const backendResponse = await axios.post(
-      "http://localhost:8000/transfer",
-      requestData
-    )
+  const backendResponse = await axios.post(
+  "http://localhost:8000/transfer",
+  requestData,
+  {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  }
+)
 
     res.json({
       status: "allowed",
