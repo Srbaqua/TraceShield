@@ -19,12 +19,11 @@ export default function Home() {
 
   const [logs, setLogs] = useState<any[]>([])
 
-  const fetchLogs = async () => {
-    const res = await fetch("http://localhost:5000/governance/logs")
-    const data = await res.json()
-    setLogs(data)
-  }
-
+const fetchLogs = async () => {
+  const res = await fetch("http://localhost:5000/governance/logs")
+  const data = await res.json()
+  setLogs(data)
+}
 const [stats, setStats] = useState<any>({})
 const fetchStats = async () => {
   const res = await fetch("http://localhost:5000/governance/stats")
@@ -33,6 +32,7 @@ const fetchStats = async () => {
 }
 
 useEffect(() => {
+
   fetchLogs()
   fetchStats()
 
