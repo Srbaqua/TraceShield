@@ -1,7 +1,8 @@
 import express from "express"
 import cors from "cors"
 import axios from "axios"
-
+import dotenv from "dotenv";
+dotenv.config();
 import governanceRoutes from "./routes/governanceRoutes"
 import logsRoute from "./routes/logsRoute"
 

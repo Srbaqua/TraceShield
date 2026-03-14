@@ -1,7 +1,13 @@
+// mongoClient.ts
 import { MongoClient } from "mongodb";
 
-const uri = "mongodb://127.0.0.1:27017";
+// Fail loudly and clearly if the variable is missing
+if (!process.env.MONGO_URI) {
+  throw new Error("FATAL ERROR: MONGO_URI is not defined in the .env file.");
+}
 
+// Pass the raw variable, no template literals needed
+const uri = process.env.MONGO_URI;
 const client = new MongoClient(uri);
 
 export async function getDatabase() {
