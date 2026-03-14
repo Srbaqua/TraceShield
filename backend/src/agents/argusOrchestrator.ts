@@ -1,4 +1,4 @@
-import { runIQWorkflow } from "./iqworkFlowAgent"
+import { runIQWorkflow } from "./iqWorkFlowAgent"
 import { calculateRiskScore } from "./riskAgent"
 import { evaluateRequest } from "../governance/decisionEngine"
 
