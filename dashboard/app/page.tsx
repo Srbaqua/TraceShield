@@ -13,7 +13,8 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { ShieldCheck, ShieldAlert, Activity, ArrowRightLeft } from "lucide-react"
 
 export default function Home() {
 
@@ -71,15 +72,46 @@ const sendTransaction = async () => {
 
 
   return (
-    <div className="p-10">
+    <div className="min-h-screen bg-background text-foreground bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-background to-background p-8 font-sans transition-colors duration-500">
 
-      <Card>
+      <div className="max-w-7xl mx-auto space-y-8">
+        
+        {/* Header Section */}
+        <header className="flex items-center space-x-4 pb-6 border-b border-white/10">
+          <div className="p-3 bg-blue-500/10 rounded-xl shadow-[0_0_30px_rgba(59,130,246,0.2)]">
+            <Activity className="w-8 h-8 text-blue-400" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400 drop-shadow-sm">
+              Argus Sentinel
+            </h1>
+            <p className="text-muted-foreground text-sm font-medium tracking-wide mt-1">Real-time Governance & Transaction Interception Engine</p>
+          </div>
+        </header>
 
-        <CardHeader>
-          <CardTitle className="text-2xl">
-            Argus Sentinel Governance Dashboard
-          </CardTitle>
-        </CardHeader>
+        {/* Stats Grid */}
+        <div className="grid gap-6 md:grid-cols-3">
+          <Card className="bg-white/5 border-white/10 shadow-lg hover:shadow-xl hover:bg-white/[0.08] transition-all duration-300">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-semibold tracking-wide text-zinc-400">Total Intercepted</CardTitle>
+              <ArrowRightLeft className="h-5 w-5 text-zinc-500" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-4xl font-black text-zinc-100">{totalLogs}</div>
+              <p className="text-xs text-zinc-500 mt-1 font-medium">All monitored transactions</p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-red-500/5 flex-1 border-red-500/20 shadow-lg hover:shadow-red-500/10 hover:bg-red-500/10 transition-all duration-300 text-red-500 group">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-semibold tracking-wide text-red-400">Blocked Activity</CardTitle>
+              <ShieldAlert className="h-5 w-5 text-red-500/70 group-hover:text-red-400 group-hover:drop-shadow-[0_0_8px_rgba(239,68,68,0.8)] transition-all" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-4xl font-black text-red-400">{blockedLogs}</div>
+              <p className="text-xs text-red-500/60 mt-1 font-medium">Governance flags raised</p>
+            </CardContent>
+          </Card>
 
         <CardContent>
 <Card className="mb-6">
@@ -192,6 +224,7 @@ const sendTransaction = async () => {
 
       </Card>
 
+      </div>
     </div>
   )
 }

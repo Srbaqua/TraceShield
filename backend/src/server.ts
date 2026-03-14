@@ -13,8 +13,8 @@ import statsRoute from "./routes/statsRoutes"
 
 const app = express()
 
-app.use(cors())
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 
 app.use("/governance", statsRoute)
 app.use("/governance", governanceRoutes)
@@ -88,8 +88,8 @@ const finalDecision = pipeline.finalDecision
 
 })
 
-const PORT = 5000
+const PORT = 5000;
 
 app.listen(PORT, () => {
-  console.log(`Argus Sentinel running on port ${PORT}`)
-})
+  console.log(`Argus Sentinel running on port ${PORT}`);
+});
