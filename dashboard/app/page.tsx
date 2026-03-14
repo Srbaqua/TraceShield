@@ -20,6 +20,7 @@ export default function Home() {
   const [logs, setLogs] = useState<any[]>([])
   const [stats, setStats] = useState<any>({})
   const [trace, setTrace] = useState<any>(null)
+  const [suggestedRule, setSuggestedRule] = useState<any>(null)
 
   const API = "http://localhost:5000"
 
@@ -43,6 +44,7 @@ export default function Home() {
     })
     const data = await res.json()
     setTrace(data.trace)
+    setSuggestedRule(data.suggestedRule)
     fetchLogs()
     fetchStats()
   }
@@ -153,24 +155,23 @@ export default function Home() {
                   <TableRow key={log._id} className="border-gray-800 hover:bg-gray-800 transition-colors">
                     <TableCell className="text-white font-medium">{log.user}</TableCell>
                     <TableCell className="text-green-400 font-mono">{log.amount}</TableCell>
-                       <TableCell>
-  <span
-    className={`text-xs font-semibold ${
-      ["blocked", "block"].includes(String(log.decision).toLowerCase())
-        ? "text-red-300"
-        : ["allowed", "allow"].includes(String(log.decision).toLowerCase())
-        ? "text-green-300"
-        : "text-yellow-300"
-    }`}
-  >
-    {["blocked", "block"].includes(String(log.decision).toLowerCase())
-      ? " "
-      : ["allowed", "allow"].includes(String(log.decision).toLowerCase())
-      ? " "
-      : " "}
-    {log.decision}
-  </span>
-</TableCell>
+                    <TableCell>
+                      <span
+                        className={`text-xs font-semibold ${["blocked", "block"].includes(String(log.decision).toLowerCase())
+                            ? "text-red-300"
+                            : ["allowed", "allow"].includes(String(log.decision).toLowerCase())
+                              ? "text-green-300"
+                              : "text-yellow-300"
+                          }`}
+                      >
+                        {["blocked", "block"].includes(String(log.decision).toLowerCase())
+                          ? " "
+                          : ["allowed", "allow"].includes(String(log.decision).toLowerCase())
+                            ? " "
+                            : " "}
+                        {log.decision}
+                      </span>
+                    </TableCell>
                     <TableCell className="text-gray-300">{log.reason}</TableCell>
                     <TableCell className="text-gray-400 text-xs">
                       {new Date(log.timestamp).toLocaleTimeString()}
@@ -211,6 +212,27 @@ export default function Home() {
               <GovernancePipeline trace={trace} />
             </div>
           </CardContent>
+          {suggestedRule && (
+
+  <div className="mt-6 p-4 border rounded bg-gray-900 text-white">
+
+    <h2 className="text-lg font-bold mb-2">
+      🤖 AI Governance Suggestion
+    </h2>
+
+    <p><b>Rule Name:</b> {suggestedRule.name}</p>
+
+    <p>
+      <b>Condition:</b> {suggestedRule.field} {suggestedRule.operator} {suggestedRule.value}
+    </p>
+
+    <p><b>Action:</b> {suggestedRule.action}</p>
+
+    <p><b>Reason:</b> {suggestedRule.reason}</p>
+
+  </div>
+
+)}
         </Card>
       )}
 

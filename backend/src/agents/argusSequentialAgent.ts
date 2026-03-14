@@ -4,6 +4,7 @@ import { evaluateRequest } from "../governance/decisionEngine"
 import { negotiateDecision } from "./negotiatorAgent"
 import { createTrace, addTraceStep } from "../logger/traceLoggers"
 import { getUserBehaviorProfile } from "../governance/behaviourAnalyzer"
+import { suggestPolicyRule } from "./policySuggestionAgent"
 
 export async function runArgusSequentialPipeline(requestData: any) {
 
@@ -95,7 +96,24 @@ const policyDecision = await evaluateRequest(enrichedRequest)
     "resolve_conflict",
     negotiatedDecision
   )
+  // state.risk.level === "HIGH" && 
+if (negotiatedDecision.decision === "BLOCK") {
 
+  const suggestedRule = await suggestPolicyRule({
+    user: requestData.user,
+    amount: requestData.amount,
+    riskScore: state.risk.riskScore
+  })
+
+  addTraceStep(
+    trace,
+    "PolicySuggestionAgent",
+    "generate_rule",
+    suggestedRule
+  )
+
+  state.suggestedRule = suggestedRule
+}
   // -----------------------------
   // 5️ Enforcement Agent
   // -----------------------------
@@ -115,7 +133,8 @@ const policyDecision = await evaluateRequest(enrichedRequest)
   return {
     state,
     finalDecision,
-    trace
+    trace,
+    suggestedRule: state.suggestedRule
   }
 
 }
