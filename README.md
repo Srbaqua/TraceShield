@@ -17,6 +17,42 @@ Trace Shield follows a governance pipeline:
 3. **Enforce** governance policies
 4. **Record** the decision for transparency and auditing
 
+```
+Client / Agents
+       │
+       ▼
+Requestly (Enforcement Edge)
+       │
+       ▼
+Sentience Sentinel Gateway
+       │
+       ▼
+AI Governance Brain (IQ AI ADK)
+       │
+       ├ Auditor Agent
+       ├ Risk Agent
+       ├ Policy Agent
+       └ Enforcement Agent
+       │
+       ▼
+Policy Registry (Dynamic Policies)
+       │
+       ▼
+Decision
+       │
+       ├ BLOCK
+       ├ MONITOR
+       └ ALLOW
+       │
+       ▼
+External Systems
+       │
+       ├ Backend API
+       └ MongoDB Logs
+       │
+       ▼
+SOC Dashboard + Reasoning Traces
+```
 ---
 
 # Core Components
