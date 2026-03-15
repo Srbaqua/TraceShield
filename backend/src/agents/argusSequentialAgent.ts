@@ -159,7 +159,7 @@ async function autoPolicyWatcher(result: any) {
   }
 
 }
-await autoPolicyWatcher(finalDecision);
+await autoPolicyWatcher({ state, finalDecision });
   return {
     state,
     finalDecision,
