@@ -12,6 +12,9 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table"
+import SentinelHeader from "../components/SentinelHeader"
+import MCPIntegrationPanel from "../components/MCPIntegrationPanel"
+import AgentPipeline from "../components/AgentPipeline"
 
 export default function Home() {
 
@@ -61,6 +64,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-950 text-white p-10">
+      
 
       {/* Header */}
       <div className="mb-10">
@@ -158,10 +162,10 @@ export default function Home() {
                     <TableCell>
                       <span
                         className={`text-xs font-semibold ${["blocked", "block"].includes(String(log.decision).toLowerCase())
-                            ? "text-red-300"
-                            : ["allowed", "allow"].includes(String(log.decision).toLowerCase())
-                              ? "text-green-300"
-                              : "text-yellow-300"
+                          ? "text-red-300"
+                          : ["allowed", "allow"].includes(String(log.decision).toLowerCase())
+                            ? "text-green-300"
+                            : "text-yellow-300"
                           }`}
                       >
                         {["blocked", "block"].includes(String(log.decision).toLowerCase())
@@ -214,27 +218,34 @@ export default function Home() {
           </CardContent>
           {suggestedRule && (
 
-  <div className="mt-6 p-4 border rounded bg-gray-900 text-white">
+            <div className="mt-6 p-4 border rounded bg-gray-900 text-white">
 
-    <h2 className="text-lg font-bold mb-2">
-      🤖 AI Governance Suggestion
-    </h2>
+              <h2 className="text-lg font-bold mb-2">
+                🤖 AI Governance Suggestion
+              </h2>
 
-    <p><b>Rule Name:</b> {suggestedRule.name}</p>
+              <p><b>Rule Name:</b> {suggestedRule.name}</p>
 
-    <p>
-      <b>Condition:</b> {suggestedRule.field} {suggestedRule.operator} {suggestedRule.value}
-    </p>
+              <p>
+                <b>Condition:</b> {suggestedRule.field} {suggestedRule.operator} {suggestedRule.value}
+              </p>
 
-    <p><b>Action:</b> {suggestedRule.action}</p>
+              <p><b>Action:</b> {suggestedRule.action}</p>
 
-    <p><b>Reason:</b> {suggestedRule.reason}</p>
+              <p><b>Reason:</b> {suggestedRule.reason}</p>
 
-  </div>
+            </div>
 
-)}
+
+          )}
         </Card>
       )}
+<div>
+<AgentPipeline />
+  </div>
+  <div>
+    <MCPIntegrationPanel />
+  </div>
 
     </div>
   )

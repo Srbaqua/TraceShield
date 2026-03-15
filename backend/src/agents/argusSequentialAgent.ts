@@ -136,7 +136,30 @@ if (negotiatedDecision.decision === "BLOCK") {
   console.log("Final Governance Decision:", finalDecision)
 
   state.finalDecision = finalDecision
+async function autoPolicyWatcher(result: any) {
 
+  if (result.finalDecision.decision === "BLOCK") {
+
+    const response = await fetch("http://127.0.0.1:8787/sse/message", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        tool: "sentinel-suggest-policy",
+        arguments: {
+          description: `Suspicious transaction detected from ${result.state.user}`
+        }
+      })
+    });
+
+    const suggestion = await response.json();
+
+    console.log("AI Policy Suggestion:", suggestion);
+  }
+
+}
+await autoPolicyWatcher(finalDecision);
   return {
     state,
     finalDecision,
