@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "sentinel-governance": {
+      "source": "github:https://www.github.com/Srbaqua/TraceShield/sentinel-mcp"
+    }
+  }
+}

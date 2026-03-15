@@ -5,6 +5,7 @@ import { negotiateDecision } from "./negotiatorAgent"
 import { createTrace, addTraceStep } from "../logger/traceLoggers"
 import { getUserBehaviorProfile } from "../governance/behaviourAnalyzer"
 import { suggestPolicyRule } from "./policySuggestionAgent"
+import { publishPolicyToNullshot } from "../nullshot/nullshotPublisher"
 
 export async function runArgusSequentialPipeline(requestData: any) {
 
@@ -15,6 +16,12 @@ export async function runArgusSequentialPipeline(requestData: any) {
   const behaviorProfile = await getUserBehaviorProfile(requestData.user)
 
 state.behavior = behaviorProfile
+
+if (state.suggestedRule) {
+
+  await publishPolicyToNullshot(state.suggestedRule)
+
+}
 
 addTraceStep(
   trace,
